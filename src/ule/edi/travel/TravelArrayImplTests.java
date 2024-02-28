@@ -261,6 +261,24 @@ public class TravelArrayImplTests {
 			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 10, true)); //venta anticipada
 			Assert.assertEquals(1, ep.getMaxNumberConsecutiveSeats());
 		}
+
+	// TEST OF getNumberOfChildren
+	@Test
+		public void testGetNumberOfChildren() throws Exception{
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, false)); //venta normal
+			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(3, ep.getNumberOfChildren());
+		}
+	
+	// TEST OF getNumberOfAdvanceSaleSeats
+	@Test
+		public void testgetNumberOfAdvanceSaleSeats() throws Exception{
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, false)); //venta normal
+			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 30, true)); //venta anticipada
+			Assert.assertEquals(2, ep.getNumberOfAdvanceSaleSeats());
+		}
 			
 }
 
