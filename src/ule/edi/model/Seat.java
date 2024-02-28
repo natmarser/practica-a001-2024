@@ -2,6 +2,7 @@ package ule.edi.model;
 
 public class Seat {
 	
+
 	private Person holder;
 	
 	private boolean advanceSale;
@@ -11,6 +12,7 @@ public class Seat {
 		this.advanceSale =advanceSale;
 	}
 	
+	
 	public Person getHolder() {
 		return holder;
 	}
@@ -19,8 +21,14 @@ public class Seat {
 		return this.advanceSale;
 	}
 	
+
 	@Override
 	public String toString() {
 		return "{Seat: 'Holder':" + holder.toString() + ", Venta anticipada:" + this.getAdvanceSale() + "}";
 	}
+
+
+	
+
+	
 }

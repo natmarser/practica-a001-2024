@@ -205,4 +205,7 @@ public interface Travel {
 	 * @return true si la persona ocupa una butaca vendida en venta anticipada, false en caso contrario
 	 */
 	public boolean isAdvanceSale(Person p);
+
+
+	
 }
