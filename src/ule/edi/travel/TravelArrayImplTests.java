@@ -1,5 +1,11 @@
 package ule.edi.travel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -111,6 +117,14 @@ public class TravelArrayImplTests {
 	   Assert.assertEquals(true, e.sellSeatPos(5, "10203040A","Alice", 34,false));	//venta normal  
 	   Assert.assertEquals(false, e.sellSeatPos(5, "10203040A","Alice", 34,false));	//venta normal  
 	}
+	@Test
+	public void testsellNifRepetido() throws Exception{
+		Assert.assertEquals(true , e.sellSeatPos(6,"10203040A","Alice", 34,true));	//venta anticipada
+		Assert.assertEquals(true, ep.sellSeatPos(2,"10203040A", "Alice", 34, false)); //venta normal
+		Assert.assertEquals(false, e.sellSeatPos(9, "10203040A", "Alic", 38, false)); //venta normal
+		Assert.assertEquals(false, ep.sellSeatPos(4,"10203040A", "Alicia", 18, true)); //venta anticipada
+		Assert.assertEquals(false, ep.sellSeatPos(2, "123456N", "Maria", 10, false)); //venta normal
+	}
 	
 
 	//TEST OF sellSeatFrontPos
@@ -180,12 +194,21 @@ public class TravelArrayImplTests {
 	// TEST List
 	@Test
 	public void testGetListEventoCompleto() throws Exception{		
-		   Assert.assertEquals(true, ep.sellSeatPos(1, "10203040A","Alice", 34,true));	//venta normal  
-		   Assert.assertEquals(true, ep.sellSeatPos(2, "10203040B","Alice", 34,true));	//venta normal  
-		   Assert.assertEquals(true, ep.sellSeatPos(3, "10203040C","Alice", 34,false));	//venta normal  
-		   Assert.assertEquals(true, ep.sellSeatPos(4, "10203040D","Alice", 34,false));	//venta normal  
-		   Assert.assertEquals("[]", ep.getAvailableSeatsList().toString());
-		   Assert.assertEquals("[1, 2]", ep.getAdvanceSaleSeatsList().toString());
+		Assert.assertEquals(true, ep.sellSeatPos(1, "10203040A","Alice", 34,true));	//venta normal  
+		Assert.assertEquals(true, ep.sellSeatPos(2, "10203040B","Alice", 34,true));	//venta normal  
+		Assert.assertEquals(true, ep.sellSeatPos(3, "10203040C","Alice", 34,false));	//venta normal  
+		Assert.assertEquals(true, ep.sellSeatPos(4, "10203040D","Alice", 34,false));	//venta normal  
+		Assert.assertEquals("[]", ep.getAvailableSeatsList().toString());
+		Assert.assertEquals("[1, 2]", ep.getAdvanceSaleSeatsList().toString());
+	}
+
+	@Test
+	public void testGetListEventoConPosicionesVacias(){
+		Assert.assertEquals(true, ep.sellSeatPos(1, "10203040A","Alice", 34,false));	//venta normal  
+		Assert.assertEquals(true, ep.sellSeatPos(2, "10203040B","Alice", 34,false));	//venta normal  
+		Assert.assertEquals(true, ep.sellSeatPos(4, "10203040D","Alice", 34,false));	//venta normal 
+		Assert.assertEquals("[3]", ep.getAvailableSeatsList().toString());
+		Assert.assertEquals("[]", ep.getAdvanceSaleSeatsList().toString()); 
 	}
 	
 	
@@ -217,9 +240,48 @@ public class TravelArrayImplTests {
 			Assert.assertEquals(true, e.sellSeatPos(1, "1010", "AA", 10, true));	
 			Assert.assertEquals(p,e.refundSeat(1));
 			}
+
+		@Test
+		public void testRefundFueraDeRango() throws Exception{
+			Assert.assertEquals(null, e.refundSeat(111));
+			Assert.assertEquals(null, e.refundSeat(-1));	
+		}
+
+		@Test
+		public void testRefundPosicionesExtremos() throws Exception{
+			Person p=new Person("1010", "AA",10);
+			Assert.assertEquals(true, e.sellSeatPos(110, "1010", "AA", 10, true));
+			Assert.assertEquals(p, e.refundSeat(110));
 		
+		}
+
+
+		@Test
+		public void testRefundPosicionIntermedia() throws Exception{
+			Person p=new Person("1010", "AA",10);
+			Assert.assertEquals(true, e.sellSeatPos(57, "1010", "AA", 10, true));	
+			Assert.assertEquals(p,e.refundSeat(57));
+		}
+
+		@Test
+		public void testRefundPosicionVacia() throws Exception{
+			Assert.assertEquals(true,ep.sellSeatPos(1, "1010", "AA", 10, true));
+			Assert.assertEquals(true,ep.sellSeatPos(2, "10101", "AA", 10, false));
+			Assert.assertEquals(true,ep.sellSeatPos(4, "101010", "AA", 10, true));
+
+			Assert.assertEquals(null, ep.refundSeat(3));
+		}
+
+		@Test
+		public void testRefundSuccess() throws Exception{
+			Person p = new Person("12345678A", "Juan", 30);
+        	Seat s = new Seat(false, p);
+			ep.sellSeatPos(2, "12345678A", "Juan", 30, false);
+			Assert.assertEquals(p, s.getHolder());
+			Assert.assertEquals(p, ep.refundSeat(2));
+		}
+
 		
-	
 		
 	// TEST GetPosPerson
 	@Test
@@ -274,12 +336,117 @@ public class TravelArrayImplTests {
 	// TEST OF getNumberOfAdvanceSaleSeats
 	@Test
 		public void testgetNumberOfAdvanceSaleSeats() throws Exception{
-			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 17, true)); //venta anticipada
 			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, false)); //venta normal
 			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 30, true)); //venta anticipada
 			Assert.assertEquals(2, ep.getNumberOfAdvanceSaleSeats());
+			Assert.assertEquals(1, ep.getNumberOfAdults());
+			Assert.assertEquals(2, ep.getNumberOfChildren());
 		}
-			
+
+	//TEST OF getNumberOfNormalSaleSeats y getNumberOfAdvanceSaleSeats
+	@Test
+		public void testGetNumberOfSeats() throws Exception{
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, false)); //venta normal
+			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 30, true)); //venta anticipada
+			Assert.assertEquals(1, ep.getNumberOfNormalSaleSeats());
+			Assert.assertEquals(2, ep.getNumberOfAdvanceSaleSeats());
+		}
+
+	@Test
+		public void testGetNumberOfSeatsVacío() throws Exception{
+			Assert.assertEquals(0, ep.getNumberOfAdvanceSaleSeats());
+			Assert.assertEquals(0, ep.getNumberOfNormalSaleSeats());
+		}
+
+	@Test
+		public void testGetNumberOfNormalSeatsTodasVentaAnticipada() throws Exception{
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, true)); //venta normal
+			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 30, true)); //venta anticipada
+			Assert.assertEquals(0, ep.getNumberOfNormalSaleSeats());
+		}
+
+	//TEST OF getSeat
+	@Test
+		public void testGetSeatCero(){
+			Assert.assertEquals(true,e.sellSeatPos(1, "1010", "AA", 10, true));
+			Assert.assertEquals(true,e.sellSeatPos(4, "10101", "AA", 10, false));
+			Assert.assertEquals(null, e.getSeat(78));
+		}
+
+	@Test
+		public void testGetSeatUltimaPos() throws Exception{
+			Assert.assertEquals(true,e.sellSeatPos(56, "1010", "AA", 10, true));
+			Assert.assertEquals(true,e.sellSeatPos(110, "10101", "AA", 10, false));
+			Assert.assertNotNull(e.getSeat(110));
+		}
+	
+	/*@Test
+		public void testGeatSeatPosIntermedia() throws Exception{
+			//Person p=new Person("1010", "AA",10);
+			//Seat s = new Seat(false, p);
+			Assert.assertEquals(true,e.sellSeatPos(56, "1010", "AA", 10, false));
+			Assert.assertEquals(new Seat(false, new Person("1010", "AA",10)), e.getSeat(56));
+		}*/
+
+	@Test
+		public void testGeatSeatPosCero() throws Exception{
+			//Assert.assertEquals(true,e.sellSeatPos(1, "1010", "AA", 10, true));	
+			Assert.assertEquals(null,e.getSeat(0));
+		}
+
+	@Test
+		public void testGetSeatPosUno() throws Exception{
+			Assert.assertEquals(true,e.sellSeatPos(1, "1010", "AA", 10, true));
+			Assert.assertNotNull(e.getSeat(1));
+		}
+
+	@Test
+		public void testGetSeatPosicionIntermedia() throws Exception{
+			Assert.assertEquals(true,e.sellSeatPos(10, "1010", "AA", 10, true));
+			Assert.assertNotNull(e.getSeat(10));
+		}
+
+	@Test
+		public void testGeatSeatPosicionFueraDeRango() throws Exception{
+			Assert.assertEquals(null, e.getSeat(111));
+		}
+
+	// TEST OF equals
+	@Test
+		public void testEqualsReflexive() throws Exception{
+        	Person person = new Person("10203040A", "Alice", 30);
+        	Assert.assertTrue(person.equals(person)); // Reflexive: un objeto debe ser igual a sí mismo
+    	}
+
+	@Test
+    	public void testEqualsNull() {
+        	Person person = new Person("10203040A", "Alice", 30);
+        	Assert.assertFalse(person.equals(null)); // Un objeto nunca debe ser igual a null
+    	}
+
+	@Test
+    	public void testEqualsDistintaClass() {
+        	Person person = new Person("10203040A", "Alice", 30);
+        	Assert.assertFalse(person.equals("10203040A")); // Comparar con un objeto de otra clase
+    	}
+	
+	@Test
+    	public void testEqualsMismoNif() {
+        	Person person1 = new Person("10203040A", "Alice", 30);
+        	Person person2 = new Person("10203040A", "Ana", 25);
+        	Assert.assertTrue(person1.equals(person2)); // Dos personas con el mismo NIF deben ser iguales
+    	}
+
+	@Test
+    	public void testEqualsDistintoNif() {
+        	Person person1 = new Person("10203040A", "Alice", 30);
+        	Person person2 = new Person("10203040B", "Ana", 25);
+        	Assert.assertFalse(person1.equals(person2)); // Dos personas con diferente NIF no deben ser iguales
+    	}
+
 }
 
 
