@@ -327,10 +327,11 @@ public class TravelArrayImplTests {
 	// TEST OF getNumberOfChildren
 	@Test
 		public void testGetNumberOfChildren() throws Exception{
-			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", 10, true)); //venta anticipada
-			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 10, false)); //venta normal
+			Assert.assertEquals(true, ep.sellSeatPos(1, "1010", "AA", -2, true)); //venta anticipada
+			Assert.assertEquals(true, ep.sellSeatPos(3, "10101", "AA", 18, false)); //venta normal
 			Assert.assertEquals(true, ep.sellSeatPos(2, "101011", "AA", 10, true)); //venta anticipada
-			Assert.assertEquals(3, ep.getNumberOfChildren());
+			Assert.assertEquals(true, ep.sellSeatPos(4, "1010110", "AA", 0, false)); //venta normal
+			Assert.assertEquals(2, ep.getNumberOfChildren());
 		}
 	
 	// TEST OF getNumberOfAdvanceSaleSeats
