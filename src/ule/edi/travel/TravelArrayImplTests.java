@@ -383,18 +383,9 @@ public class TravelArrayImplTests {
 			Assert.assertEquals(true,e.sellSeatPos(110, "10101", "AA", 10, false));
 			Assert.assertNotNull(e.getSeat(110));
 		}
-	
-	/*@Test
-		public void testGeatSeatPosIntermedia() throws Exception{
-			//Person p=new Person("1010", "AA",10);
-			//Seat s = new Seat(false, p);
-			Assert.assertEquals(true,e.sellSeatPos(56, "1010", "AA", 10, false));
-			Assert.assertEquals(new Seat(false, new Person("1010", "AA",10)), e.getSeat(56));
-		}*/
 
 	@Test
-		public void testGeatSeatPosCero() throws Exception{
-			//Assert.assertEquals(true,e.sellSeatPos(1, "1010", "AA", 10, true));	
+		public void testGeatSeatPosCero() throws Exception{	
 			Assert.assertEquals(null,e.getSeat(0));
 		}
 
